@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# written by: Suvankar Satpati      
+# date : January 28, 2014        
+#Description:A shell script (cppgen) that creates a Skeleton C++ project workspace
+
+#Checking user input
+if [ $# -eq 0 ]
+then
+  echo "ERROR: Illegal Argument."
+  echo "USAGE: cppgen <project-name>"
+  exit 0
+  
+fi
+  
+PROJECTNAME=$1
+  
+if [ "$PROJECTNAME" = "cppgen" ]
+then
+  echo "Sorry, cppgen not allowed."
+  exit 0
+fi 
+
+#Creating directories.
+#Traversing directories.
+
+mkdir $PROJECTNAME
+cd $PROJECTNAME
+mkdir bin
+mkdir include
+mkdir lib
+mkdir obj
+
+#Creating Makefile
+#here document 
+
+cat > Makefile <<EOF
+
+CXXFLAGS =  -O2 -g -Wall
+
+BINDIR = bin
+OBJDIR = obj
+SRCDIR = src
+
+$PROJECTNAME: \$(OBJDIR)/main.o
+	\$(CXX) -o \$(BINDIR)/$PROJECTNAME \$(OBJDIR)/main.o
+	\$(OBJDIR)/%.o:\$(SRCDIR)/%.cpp
+	\$(CXX) -c -o \$@ $< \$(CXXFLAGS) 
+clean:
+	rm \$(OBJDIR)/*.o \$(BINDIR)/$PROJECTNAME
+EOF
+
+#Creating Readme
+#here document
+cat > README <<EO
+
+$PROJECTNAME Readme
+-------------------
+Add build / installation instructions here.
+
+EO
+
+mkdir src
+cd src 
+
+#Creating main .cpp
+#here document 
+cat > main.cpp <<END 
+
+int main(int argc, char *argv[])
+{
+        return 0;
+}
+
+END
+
+exit 0
