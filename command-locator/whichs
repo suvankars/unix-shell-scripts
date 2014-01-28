@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# written by: Suvankar Satpati      
+# date : February 23, 2011        
+# Description : A shell script (whichs) which locates a command.
+
+FLAG=1
+
+if [ $# -eq 0 ]; then
+	echo "llegal argument list" 
+    echo "USAGE: whichs [-a] filename ..."
+fi
+
+# -a switch is optional - If supplied, print all matching pathnames of each argument
+
+if [ '$1' = '-a' ];then
+	FLAG=0
+    shift
+fi
+
+#command list.. signifies a list of file names that can be supplied as argument to the script.
+#Check the status of FLAG for all matching pathnames of each argument.
+
+function_call ()
+{
+    command_list=$1
+	for path_component in `echo $PATH | sed 's/:/ /g' | sed 's/:/ /g'`
+	do
+		if test -f $path_component/$command_list ; then
+			echo "$path_component/$command_list"
+    
+			if [ $FLAG -eq 1 ];then
+		    	break
+			fi
+    	fi	
+	done
+}
+
+for i in $*
+do
+	function_call $1
+	shift
+done
