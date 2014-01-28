@@ -1,9 +1,10 @@
 # This shell script (cppgen) creates a Skeleton C++ project workspace
 
-#sample input 
-./cppgen HelloWorld
+######sample input 
+`$ ./cppgen HelloWorld`
 
-#sample output
+######sample output
+<b>
  HelloWorld
     |-- bin
     |-- include
@@ -14,6 +15,6 @@
     `-- src
         `-- main.cpp
 
-
+</b>
 
 
