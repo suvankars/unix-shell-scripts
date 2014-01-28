@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# written by: Suvankar Satpati
+# date : January 26, 2014
+# Description : A shell script (indexr) that reads a large text file and creates a index file containing a index of words and their locations in the file.
+
+#taking input and output file name from user
+INPUTFILE=$1
+OUTPUTFILE=$2
+
+if [ $# -eq 1 ]
+then
+	echo "ERROR: Illegal Argument."
+	echo "USAGE: indexr <source-file> <output-index-file>"
+ 	exit 1
+fi
+# Making a uniq list
+list=`cat $INPUTFILE | tr -sc '^a-zA-Z' '\n' | tr 'A-Z' 'a-z' | sort | uniq -i`
+
+# Finding index from that uniq list
+for word in $list
+do
+   position=`grep -ibow $word $INPUTFILE | cut -f1 -d:`
+   commaseparetor=`echo $position | sed 's/ /, /g'`
+   echo "$word ... $commaseparetor"
+
+done > $OUTPUTFILE
+exit 0
