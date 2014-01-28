@@ -12,7 +12,7 @@ A shell script (indexr) that reads a large text file and creates a index file co
 
 ###### Sample Output:
 
-<b>amaze ... 11967
-amazed ... 62561
-ambition ... 21227, 31118, 61884, 74135, 77505, 77746
-ambitious ... 21791, 74015, 76928, 77264, 77437, 77574, 77783, 78562</b>
+...amaze ... 11967
+...amazed ... 62561
+...ambition ... 21227, 31118, 61884, 74135, 77505, 77746
+...ambitious ... 21791, 74015, 76928, 77264, 77437, 77574, 77783, 78562
