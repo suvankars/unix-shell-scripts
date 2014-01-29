@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# written by: Suvankar Satpati      
+# date: February 24, 2011        
+# Description: A shell script (cppimplgen), that reads a C++ header file and generates the corresponding implementation file (skeleton).
+
+function usage()
+{
+	echo "ERROR: Illegal Argument."
+	echo "UAGE: cppimplgen <cpp-header-file>"
+	exit 1
+ }
+
+if [ $# -eq 0 ];then
+	usage
+fi
+
+# The script takes the header file name as command-line argument.
+
+HEADER_FILE=$1
+echo ""
+echo "#include"  $1 
+echo ""
+
+# Find out  name of the class and save it into variable class_name 
+cat $HEADER_FILE| sed 's/\t//g'|awk '
+ /class/ { 
+	 class_name=$2
+	 next
+ }
+
+ 
+# Processing of  destructor
+
+ /~[a-zA-Z][a-zA-Z]*(.*)/ { 
+ 	print class_name"::~"class_name"()" 
+	print "{"
+	print "}"
+	next
+    
+
+
+}
+
+# Processing of Constructor 
+
+ /^[a-zA-Z][a-zA-Z]*\(.*\)/ {
+    
+    printf class_name "::" class_name "(" 
+    
+	for ( i=2; i<NF; i++)
+	{
+		args=$i	
+	    printf args 
+    }
+	print ")"
+	print "{"
+	print "}"
+    next 
+}
+
+
+#Processing all  remaning method	
+
+/\(.*\)/ {
+  
+	 split($0, tmp, "(")
+	 split(tmp[2], temp, ")")
+	 args=temp[1]
+	 split(tmp[1], temp1, " ")
+	 method_name=temp1[2]
+	 print $1" "class_name"::"method_name"("args")" 
+	 print "{"
+	 print "}"
+
+ }
+
+ 
+ '|sed 's/=[ ]*[a-z][a-z]*//g'
+
+ 

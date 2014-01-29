@@ -1,0 +1,24 @@
+
+#include Json.h
+
+JsonReader::JsonReader()
+{
+}
+JsonReader::JsonReader(constFeatures&features)
+{
+}
+JsonReader::~JsonReader()
+{
+}
+bool JsonReader::parse( const std::string &document, Value &root, bool collectComments  )
+{
+}
+bool JsonReader::parse( const char *beginDoc, const char *endDoc, Value &root, bool collectComments  )
+{
+}
+bool JsonReader::parse( std::istream &is, Value &root, bool collectComments  )
+{
+}
+std::string JsonReader::getFormatedErrorMessages()
+{
+}
