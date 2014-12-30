@@ -1,10 +1,10 @@
 #!/bin/bash
 
 cat input | awk '  
-
+output = "out.json"
 BEGIN { 
 	FS="=" 
-	print "["
+	print "[" > "out.json"
 }
 
 NR == 1 { 
@@ -26,30 +26,30 @@ NR == 2 {
 
 NR > 2 {
 		if ( NR != 3 )
-			print ","
+			print "," >> output
 
-		print  "\t\""ELEMENT"\"" ":"" " "{"
+		print  "\t\""ELEMENT"\"" ":"" " "{" >> output
 
 
 		for (j=1; j<=NF; j++)
 		{
 			tag_content = $j
 
-			printf "\t\t" "\"" tag_name[j]"\"" "  " ":""  ""\""tag_content"\""  
+			printf "\t\t" "\"" tag_name[j]"\"" "  " ":""  ""\""tag_content"\""  >> output
 
 			if(j != NF)
-				printf ","
+				printf "," >> output  
 
-			print ""
+			print "" >> output 
 			
         }
 
 
-		printf "\t}" 
+		printf "\t}" >> output 
 }
     
 END {
-	print "\n]"
+	print "\n]" >> output
 }
  
 '
