@@ -1,0 +1,55 @@
+#!/bin/bash
+
+cat input | awk '  
+
+BEGIN { 
+	FS="=" 
+	print "["
+}
+
+NR == 1 { 
+	ELEMENT=$2
+	FS=","         
+}
+
+NR == 2 { 
+	for(i=1; i<=NF; i++) 
+    {
+		tag_name[i]=$i
+	}
+}
+
+/^$/ { 
+	next
+}
+
+
+NR > 2 {
+		if ( NR != 3 )
+			print ","
+
+		print  "\t\""ELEMENT"\"" ":"" " "{"
+
+
+		for (j=1; j<=NF; j++)
+		{
+			tag_content = $j
+
+			printf "\t\t" "\"" tag_name[j]"\"" "  " ":""  ""\""tag_content"\""  
+
+			if(j != NF)
+				printf ","
+
+			print ""
+			
+        }
+
+
+		printf "\t}" 
+}
+    
+END {
+	print "\n]"
+}
+ 
+'
