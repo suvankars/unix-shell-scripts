@@ -1,0 +1,17 @@
+#!/bin/bash
+
+CURRENT_DIR=`pwd`
+WORK_DIR="${CURRENT_DIR}/rails_env_setup_work"
+
+LOG_DIR="${WORK_DIR}/log"
+SCRIPT_DIR="${WORK_DIR}/scripts"
+
+
+
+SCRIPT_INSTALL_MONGO="${SCRIPT_DIR}/install_mongo.sh"
+SCRIPT_INSTALL_PREQS="${SCRIPT_DIR}/install_preqs.sh"
+SCRIPT_INSTALL_RUBY="${SCRIPT_DIR}/install_ruby.sh"
+SCRIPT_INSTALL_RAILS="${SCRIPT_DIR}/install_rails.sh"
+
+
+
