@@ -5,8 +5,11 @@ WORK_DIR="${CURRENT_DIR}/rails_env_setup_work"
 
 LOG_DIR="${WORK_DIR}/log"
 SCRIPT_DIR="${WORK_DIR}/scripts"
-
-
+DOWNLOAD_DIR="${WORK_DIR}/downloads"
+STATUS_LOG="${LOG_DIR}/status.log"
+STDOUT_LOG="${LOG_DIR}/stdout.log"
+STDERR_LOG="${LOG_DIR}/stderr.log"
+CONFIG="$CURRENT_DIR/rails_env_setup.cfg"
 
 SCRIPT_INSTALL_MONGO="${SCRIPT_DIR}/install_mongo.sh"
 SCRIPT_INSTALL_PREQS="${SCRIPT_DIR}/install_preqs.sh"
@@ -14,4 +17,100 @@ SCRIPT_INSTALL_RUBY="${SCRIPT_DIR}/install_ruby.sh"
 SCRIPT_INSTALL_RAILS="${SCRIPT_DIR}/install_rails.sh"
 
 
+
+#Functions
+function log_status(){
+	echo $1 >> $STATUS_LOG
+	echo $1
+}
+
+function create_work_area() {
+	if [ -d "$WORK_DIR" ]; then
+		echo "Found previous work dir.. removing..."
+		echo $sudopassword |sudo -S rm -rf $WORK_DIR
+	fi
+		mkdir $WORK_DIR $LOG_DIR $SCRIPT_DIR $DOWNLOAD_DIR
+		touch $STATUS_LOG $STDOUT_LOG $STDERR_LOG
+}
+
+function sudo_exec_script() {
+	SCRIPT=$1
+	log_status "Executing with sudo: ${SCRIPT} ..."
+	echo $sudopassword | sudo -S bash $SCRIPT 1>>$STDOUT_LOG 2>>$STDERR_LOG
+}
+
+function exec_script() {
+	SCRIPT=$1
+	log_status "Executing ${SCRIPT} ..."
+	bash $SCRIPT 1>>$STDOUT_LOG 2>>$STDERR_LOG
+}
+
+function create_scripts() {
+	log_status "Creating installation scripts ..."
+
+cat << PREQS_EOF > $SCRIPT_INSTALL_PREQS
+# Created by env setup script.. 
+
+apt-get -q update
+apt-get -f -y -q install build-essential openssl libreadline6 libreadline6-dev curl 
+apt-get -f -y -q install git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-0 
+apt-get -f -y -q install libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf 
+apt-get -f -y -q install libc6-dev ncurses-dev automake libtool bison subversion 
+apt-get -f -y -q install libcurl4-openssl-dev apache2-prefork-dev libapr1-dev libaprutil1-dev
+PREQS_EOF
+
+
+cat << MONGO_EOF > $SCRIPT_INSTALL_MONGO
+# Created by env setup script.. 
+# Installs mongodb as an upstart service ...
+
+apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+sh -c "echo  deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen >> /etc/apt/sources.list.d/mongodb.list"
+apt-get -q update
+apt-get -q install -y mongodb-org
+MONGO_EOF
+
+cat << RVM_EOF > $SCRIPT_INSTALL_RVM
+# Created by env setup script.. 
+# Installs rvm ...
+
+curl -L https://get.rvm.io | bash -s stable
+source "${HOME}/.rvm/scripts/rvm"
+RVM_EOF
+
+
+cat << RUBY_EOF > $SCRIPT_INSTALL_RUBY
+# Created by env setup script.. 
+# Installs ruby using rvm
+
+source "$HOME/.rvm/scripts/rvm"
+rvm install 2.0.0
+rvm use 2.0.0
+RUBY_EOF
+
+cat << RAILS_EOF > $SCRIPT_INSTALL_RAILS
+# Created by env setup script.. 
+# Installs Rails ...
+
+source "$HOME/.rvm/scripts/rvm"
+rvm gemset create rails-4.0
+rvm use 2.0.0@rails-4.0 --default 
+gem install rails --version=4.0 --no-ri --no-rdoc
+RAILS_EOF
+
+}
+
+
+# Main script starts from here ...
+
+source $CONFIG
+create_work_area
+create_scripts	
+
+sudo_exec_script $SCRIPT_INSTALL_PREQS
+sudo_exec_script $SCRIPT_INSTALL_MONGO
+exec_script $SCRIPT_INSTALL_RVM
+exec_script $SCRIPT_INSTALL_RUBY
+exec_script $SCRIPT_INSTALL_RAILS
+log_status "Ruby on Rails environment setup successfully done :)"
 
